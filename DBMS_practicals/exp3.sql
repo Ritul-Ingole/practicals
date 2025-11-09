@@ -1,3 +1,57 @@
+CREATE TABLE Instructor (
+    Instructor_ID NUMBER PRIMARY KEY,
+    Name VARCHAR2(50),
+    Department VARCHAR2(30),
+    Email VARCHAR2(50)
+);
+
+CREATE TABLE Course (
+    Course_ID NUMBER PRIMARY KEY,
+    Course_Name VARCHAR2(50),
+    Credits NUMBER,
+    Instructor_ID NUMBER,
+    FOREIGN KEY (Instructor_ID) REFERENCES Instructor(Instructor_ID)
+);
+
+CREATE TABLE Student (
+    Student_ID NUMBER PRIMARY KEY,
+    Name VARCHAR2(50),
+    Email VARCHAR2(50),
+    Phone VARCHAR2(15),
+    Address VARCHAR2(100)
+);
+
+CREATE TABLE Enrollment (
+    Enrollment_ID NUMBER PRIMARY KEY,
+    Student_ID NUMBER,
+    Course_ID NUMBER,
+    Enrollment_Date DATE,
+    FOREIGN KEY (Student_ID) REFERENCES Student(Student_ID),
+    FOREIGN KEY (Course_ID) REFERENCES Course(Course_ID)
+);
+
+-- Insert fresh data
+INSERT INTO Instructor VALUES (1, 'Dr. Sharma', 'Computer', 'sharma@college.edu');
+INSERT INTO Instructor VALUES (2, 'Prof. Mehta', 'Mathematics', 'mehta@college.edu');
+
+INSERT INTO Course VALUES (101, 'DBMS', 4, 1);
+INSERT INTO Course VALUES (102, 'Discrete Math', 3, 2);
+
+INSERT INTO Student VALUES (1001, 'Ritul Ingole', 'ritul@college.edu', '9876543210', 'Pune');
+INSERT INTO Student VALUES (1002, 'Aryan Deshmukh', 'aryan@college.edu', '9823456789', 'Nagpur');
+
+INSERT INTO Enrollment VALUES (1, 1001, 101, SYSDATE);
+INSERT INTO Enrollment VALUES (2, 1002, 102, SYSDATE);
+
+COMMIT;
+
+
+
+
+
+
+
+
 SELECT s.Student_ID, s.Name, c.Course_Name
 FROM Student s
 JOIN Enrollment e ON s.Student_ID = e.Student_ID
@@ -25,33 +79,33 @@ SELECT s.NAME AS STUDENT_NAME, c.COURSE_NAME
 FROM STUDENT s
 CROSS JOIN COURSE c;
 
-
+/*self join*/
 SELECT e1.NAME AS STUDENT1, e2.NAME AS STUDENT2
 FROM STUDENT e1, STUDENT e2
 WHERE e1.STUDENT_ID<>e2.STUDENT_ID;
 
-
+/*SUBQUERY (SINGLE ROW)*/
 SELECT NAME, ADDRESS
 FROM STUDENT
 WHERE(
     SELECT STUDENT_ID FROM ENROLLMENT WHERE COURSE_ID = 102
 );
 
-
+/*SUBQUERY (MULTIPLE ROW)*/
 SELECT NAME
 FROM STUDENT
 WHERE STUDENT_ID IN (
     SELECT STUDENT_ID FROM ENROLLMENT WHERE COURSE_ID IN (101,102)
 );
 
-
+/*CORRELATED SUBQUERY*/
 SELECT NAME
 FROM STUDENT s
 WHERE EXISTS(
     SELECT * FROM ENROLLMENT e WHERE e.STUDENT_ID = s.STUDENT_ID
 );
 
-
+/*VIEW (Virtual Table)*/
 CREATE OR REPLACE VIEW StudentCourseView AS 
 SELECT 
     s.STUDENT_ID,
