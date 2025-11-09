@@ -76,3 +76,39 @@ INSERT INTO Student VALUES (student_seq.NEXTVAL, 'Rahul Patil', 'rahul@college.e
 CREATE SYNONYM stud FOR Student;
 
 SELECT * FROM stud;
+
+
+
+
+/*DML statements*/
+
+/*insert*/
+INSERT INTO Instructor VALUES (3, 'Dr. Patil', 'IT', 'patil@college.edu');
+
+/*update*/
+UPDATE Student
+SET Address = 'Mumbai'
+WHERE Student_ID = 1002;
+
+/*delete*/
+DELETE FROM Student
+WHERE Student_ID = 1003;
+
+/*SELECT (with WHERE and ORDER BY)*/
+SELECT Name, Email FROM Student
+WHERE Address = 'Pune'
+ORDER BY Name;
+
+/*SELECT (with BETWEEN)*/
+SELECT * FROM Course
+WHERE Credits BETWEEN 3 AND 5;
+
+/*SELECT (with LIKE)*/
+SELECT * FROM Instructor
+WHERE Name LIKE 'Dr%';
+
+/*SELECT (with GROUP BY and HAVING)*/
+SELECT Instructor_ID, COUNT(*) AS Total_Courses
+FROM Course
+GROUP BY Instructor_ID
+HAVING COUNT(*) > 1;
