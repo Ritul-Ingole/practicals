@@ -1,0 +1,13 @@
+package app;
+
+import library.MyMath;
+
+public class MyApp {
+    public static void main(String[] args) {
+        int sum = MyMath.add(10, 20);
+        int fact = MyMath.factorial(5);
+
+        System.out.println("Sum = " + sum);
+        System.out.println("Factorial = " + fact);
+    }
+}

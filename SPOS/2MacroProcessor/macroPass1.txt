@@ -1,0 +1,37 @@
+import java.io.*;
+import java.util.*;
+public class macroPass1 {
+	public static void main(String[] args) throws Exception{
+		BufferedReader br = new BufferedReader(new FileReader("macro_input.txt"));
+		
+		Map<String, Integer> MNT = new HashMap<>();
+		List<String> MDT = new ArrayList<>();
+		List<String> ALA = new ArrayList<>();
+		
+		String line;
+		int mdtp = 1;
+		
+		while((line = br.readLine()) != null) {
+			String parts[] = line.trim().split("\\s+");
+			if(parts[0].equalsIgnoreCase("MACRO")) {
+				line = br.readLine();
+				String macroName = line.split("\\s+")[0];
+				MNT.put(macroName, mdtp);
+				
+				String[] arg = line.split("\\s+")[1].split(",");
+				for(String a: arg) {
+					ALA.add(a);
+				}
+				while(!(line = br.readLine()).equalsIgnoreCase("MEND")) {
+					MDT.add(line);
+					mdtp++;
+				}
+					MDT.add("MEND");
+					mdtp++;
+			}
+		}
+		System.out.println("\nMNT:" + MNT);
+		System.out.println("MDT:" + MDT);
+		System.out.println("ALA:" + ALA);
+	} 
+}

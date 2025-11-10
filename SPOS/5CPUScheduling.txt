@@ -1,0 +1,133 @@
+import java.util.*;
+
+public class CPUScheduling {
+
+    static class Process {
+        int pid;        
+        int burstTime;  
+        int arrivalTime;
+        int priority;
+
+        Process(int pid, int burstTime, int arrivalTime, int priority) {
+            this.pid = pid;
+            this.burstTime = burstTime;
+            this.arrivalTime = arrivalTime;
+            this.priority = priority;
+        }
+    }
+
+
+    public static void fcfs(List<Process> processes) {
+        System.out.println("\n--- First Come First Serve (FCFS) ---");
+        processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
+
+        int currentTime = 0;
+        for (Process p : processes) {
+            if (currentTime < p.arrivalTime)
+                currentTime = p.arrivalTime;
+            int waitingTime = currentTime - p.arrivalTime;
+            int turnaroundTime = waitingTime + p.burstTime;
+            currentTime += p.burstTime;
+
+            System.out.println("P" + p.pid + " | Waiting Time: " + waitingTime + " | Turnaround Time: " + turnaroundTime);
+        }
+    }
+
+
+    public static void sjf(List<Process> processes) {
+        System.out.println("\n--- Shortest Job First (Preemptive) ---");
+        int n = processes.size();
+        int[] remainingTime = new int[n];
+        for (int i = 0; i < n; i++) remainingTime[i] = processes.get(i).burstTime;
+
+        int complete = 0, t = 0, minm = Integer.MAX_VALUE, shortest = 0, finishTime;
+        boolean check = false;
+
+        while (complete != n) {
+            for (int j = 0; j < n; j++) {
+                if ((processes.get(j).arrivalTime <= t) && (remainingTime[j] < minm) && remainingTime[j] > 0) {
+                    minm = remainingTime[j];
+                    shortest = j;
+                    check = true;
+                }
+            }
+
+            if (!check) {
+                t++;
+                continue;
+            }
+
+            remainingTime[shortest]--;
+            minm = remainingTime[shortest];
+            if (minm == 0) minm = Integer.MAX_VALUE;
+
+            if (remainingTime[shortest] == 0) {
+                complete++;
+                check = false;
+                finishTime = t + 1;
+                int waitingTime = finishTime - processes.get(shortest).burstTime - processes.get(shortest).arrivalTime;
+                if (waitingTime < 0) waitingTime = 0;
+                System.out.println("P" + processes.get(shortest).pid + " | Waiting Time: " + waitingTime);
+            }
+            t++;
+        }
+    }
+
+
+    public static void priority(List<Process> processes) {
+        System.out.println("\n--- Priority Scheduling (Non-Preemptive) ---");
+        processes.sort(Comparator.comparingInt(p -> p.priority));
+
+        int currentTime = 0;
+        for (Process p : processes) {
+            if (currentTime < p.arrivalTime)
+                currentTime = p.arrivalTime;
+            int waitingTime = currentTime - p.arrivalTime;
+            int turnaroundTime = waitingTime + p.burstTime;
+            currentTime += p.burstTime;
+
+            System.out.println("P" + p.pid + " | Priority: " + p.priority + " | Waiting Time: " + waitingTime);
+        }
+    }
+
+    
+    public static void roundRobin(List<Process> processes, int quantum) {
+        System.out.println("\n--- Round Robin (Preemptive) ---");
+        int n = processes.size();
+        int[] remainingTime = new int[n];
+        for (int i = 0; i < n; i++) remainingTime[i] = processes.get(i).burstTime;
+
+        int t = 0;
+        while (true) {
+            boolean done = true;
+            for (int i = 0; i < n; i++) {
+                if (remainingTime[i] > 0) {
+                    done = false;
+                    if (remainingTime[i] > quantum) {
+                        t += quantum;
+                        remainingTime[i] -= quantum;
+                        System.out.println("P" + processes.get(i).pid + " executed till time " + t);
+                    } else {
+                        t += remainingTime[i];
+                        System.out.println("P" + processes.get(i).pid + " finished at time " + t);
+                        remainingTime[i] = 0;
+                    }
+                }
+            }
+            if (done) break;
+        }
+    }
+
+    public static void main(String[] args) {
+        List<Process> processes = new ArrayList<>();
+        processes.add(new Process(1, 6, 2, 3));
+        processes.add(new Process(2, 8, 5, 1));
+        processes.add(new Process(3, 7, 1, 2));
+        processes.add(new Process(4, 3, 0, 4));
+
+        fcfs(new ArrayList<>(processes));
+        sjf(new ArrayList<>(processes));
+        priority(new ArrayList<>(processes));
+        roundRobin(new ArrayList<>(processes), 3);
+    }
+}

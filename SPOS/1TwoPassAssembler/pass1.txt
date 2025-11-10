@@ -1,0 +1,109 @@
+import java.util.*;
+import java.io.*;
+
+public class pass1 {
+    public static void main(String args[]) throws Exception {
+        String line = "", line2 = "";
+        
+        // DATA TABLE
+        Map<String, String> data = new HashMap<>();
+        data.put("DS", "001");
+        data.put("DC", "002");
+        System.out.println("DATA TABLE: " + data);
+        
+        // MNEMONIC TABLE
+        Map<String, String> mnemonic = new HashMap<>();
+        mnemonic.put("ADD", "01");
+        mnemonic.put("SUB", "02");
+        mnemonic.put("MUL", "03");
+        mnemonic.put("DIV", "04");
+        mnemonic.put("MOVER", "05");
+        mnemonic.put("MOVEM", "06");
+        System.out.println("MNEMONIC TABLE: " + mnemonic);
+        
+        // DIRECTIVE TABLE
+        Map<String, String> directive = new HashMap<>();
+        directive.put("START", "11");
+        directive.put("END", "12");
+        System.out.println("DIRECTIVE TABLE: " + directive);
+        
+        // CONDITION TABLE
+        Map<String, String> condition = new HashMap<>();
+        condition.put("LT", "21");
+        condition.put("GT", "22");
+        condition.put("LTE", "23");
+        condition.put("GTE", "24");
+        condition.put("EQU", "25");
+        System.out.println("CONDITION TABLE: " + condition);
+        
+        // REGISTER TABLE
+        Map<String, String> Register = new HashMap<>();
+        Register.put("AREG", "31");
+        Register.put("BREG", "32");
+        Register.put("CREG", "33");
+        Register.put("DREG", "34");
+        System.out.println("REGISTER TABLE: " + Register);
+
+        // SYMBOL AND LITERAL TABLES
+        Map<String, String> Symbol = new HashMap<>();
+        Map<String, String> lit_table = new HashMap<>();
+
+        // Update this path if needed:
+        BufferedReader br = new BufferedReader(new FileReader("input.txt"));
+
+        String[] split_words = new String[5];
+        String c;
+        int counter = 100;
+        int count1 = 0;
+        int count2 = 0;
+
+        while ((c = br.readLine()) != null) {
+            split_words = c.split("\\s+");
+            System.out.println("\n" + c);
+
+            if (split_words.length > 4) {
+                System.out.println("More than 4 words not allowed");
+                continue;
+            }
+
+            try {
+                // Label or Symbol
+                if (split_words.length > 0 && !split_words[0].equals("")) {
+                    if (!Symbol.containsKey(split_words[0]) && !mnemonic.containsKey(split_words[0]) && !directive.containsKey(split_words[0])) {
+                        count2++;
+                        Symbol.put(split_words[0], Integer.toString(count2));
+                    }
+                }
+
+                // Check Mnemonics
+                if (split_words.length > 1 && mnemonic.containsKey(split_words[1])) {
+                    System.out.print("\t" + mnemonic.get(split_words[1]));
+                }
+
+                // Check Register
+                if (split_words.length > 2 && Register.containsKey(split_words[2])) {
+                    System.out.print("\t" + Register.get(split_words[2]));
+                }
+
+                // Check Literal
+             // check all tokens for literals
+                for (String word : split_words) {
+                    if (word.startsWith("='")) {
+                        count1++;
+                        lit_table.put(word, Integer.toString(count1));
+                        System.out.println("\tL" + lit_table.get(word));
+                    }else if (split_words.length > 3 && Symbol.containsKey(split_words[3])) {
+                        System.out.println("\tS" + Symbol.get(split_words[3]));
+                } 
+                }
+
+                counter++;
+            } catch (Exception e) {
+                continue;
+            }
+        }
+
+        System.out.println("\nSYMBOL TABLE: " + Symbol);
+        System.out.println("LITERAL TABLE: " + lit_table);
+    }
+}

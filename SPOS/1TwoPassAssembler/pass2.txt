@@ -1,0 +1,54 @@
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.*;
+
+public class pass2 {
+    public static void main(String[] args) throws Exception{
+        
+        Map<String, Integer> symbol = new HashMap<>();
+        symbol.put("A", 200);
+
+        Map<String, Integer> literal = new HashMap<>();
+        literal.put("='5'", 201);
+
+
+        Map<String, String> mnemonic = new HashMap<>();
+        mnemonic.put("ADD", "01");
+        mnemonic.put("SUB", "02");
+        mnemonic.put("MOVER", "05");
+        mnemonic.put("MOVEM", "06");
+
+        Map<String, String> register = new HashMap<>();
+        register.put("AREG", "31");
+        register.put("BREG", "32");
+        register.put("CREG", "33");
+        register.put("DREG","34");
+
+
+        BufferedReader br = new BufferedReader(new FileReader("input.txt"));
+        String line;
+        int lc = 200;
+
+        System.out.println("MACHINE CODE:");
+
+        while((line = br.readLine()) != null){
+            String parts[] = line.split("\\s+");
+            if(parts[0].equals("START") || parts[0].equals("END") || parts[0].equals("DS")) continue;
+            if(parts[0].equals("")) continue;
+
+            if(parts[0].equals("MOVER")) {
+                String reg = register.get(parts[1].replace(",",""));
+                String lit = parts[2];
+                int litAddr = literal.get(lit);
+                System.out.println(lc + " " + mnemonic.get("MOVER") + " " + reg + " " + litAddr);
+            }else if(parts[0].equals("ADD")){
+                String reg = register.get(parts[1].replace(",",""));
+                String sym = parts[2];
+                int symAddr = symbol.get(sym);
+                System.out.println(lc + " " + mnemonic.get("ADD") + " " + reg + " " + symAddr);
+            }
+            lc++;
+        }
+    }
+}

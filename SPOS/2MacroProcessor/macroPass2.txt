@@ -1,0 +1,39 @@
+import java.io.*;
+import java.util.*;
+
+public class macroPass2 {
+
+	public static void main(String[] args) throws Exception{
+		Map<String, Integer> MNT = new HashMap<>();
+		MNT.put("INCR", 2);
+		
+		List<String> MDT = Arrays.asList(
+				"ADD &A, &B",
+				"MOVER BREG, &A",
+				"MEND"
+		);
+		
+		BufferedReader br = new BufferedReader(new FileReader("macro_input.txt"));
+		String line;
+		
+		System.out.println("\nEXPANDED CODE:\n");
+		
+		while((line = br.readLine()) != null) {
+		    if(line.trim().isEmpty()) continue;
+		    String parts[] = line.trim().split("\\s+");
+
+		    if(parts[0].equalsIgnoreCase("INCR") && parts.length > 1) {
+		        String[] arg = parts[1].split(",");
+		        for(String stmt: MDT) {
+		            if(stmt.equals("MEND")) break;
+		            String expanded = stmt.replace("&A", arg[0]).replace("&B", arg[1]);
+		            System.out.println(expanded);
+		        }
+		    } else if(!parts[0].equalsIgnoreCase("MACRO") && !parts[0].equalsIgnoreCase("MEND")) {
+		        System.out.println(line);
+		    }
+		}
+
+	}
+
+}
